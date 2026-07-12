@@ -1,0 +1,79 @@
+odrv0.erase_configuration()
+基本配置：
+耗散电阻：odrv0.config.brake_resistance = 2.0
+低压保护：odrv0.config.dc_bus_undervoltage_trip_level = 8
+高压保护：odrv0.config.dc_bus_overvoltage_trip_level = 36
+母线过流保护：odrv0.config.dc_max_positive_current = 80
+制动电流保护：odrv0.config.dc_max_negative_current = -10
+回充电流配置：odrv0.config.max_regen_current = 0（开关电源无法回充）
+
+电机配置：
+极对数配置：odrv0.axis0.motor.config.pole_pairs = 7
+校准电流配置d：odrv0.axis0.motor.config.calibration_current = 10
+校准电压：odrv0.axis0.motor.config.resistance_calib_max_voltage = 6（和相电阻有关，正比）
+配置为大电流电机：odrv0.axis0.motor.config.motor_type = MOTOR_TYPE_HIGH_CURRENT
+电机最大电流限制：odrv0.axis0.motor.config.current_lim = 60
+超过电机最大运行电流的容忍度 odrv0.axis1.motor.config.current_lim_margin=16
+配置电机电流采样范围：odrv0.axis0.motor.config.requested_current_range = 84
+这是每安培传递给电机的电流电机产生的扭矩之比。应设置为 8.27/（电机 KV）:   odrv0.axis0.motor.config.torque_constant=0.0295
+
+编码器配置：
+配置为增量式：odrv0.axis0.encoder.config.mode = ENCODER_MODE_INCREMENTAL
+配置有索引信号：odrv0.axis0.encoder.config.use_index = True
+配置分辨率：odrv0.axis0.encoder.config.cpr = 8192（本项目电机）
+配置PLL带宽：odrv0.axis0.encoder.config.bandwidth = 1000
+	编码器校准电机开环配置：
+	odrv0.axis0.config.calibration_lockin.current = 8 开环电流
+	odrv0.axis0.config.calibration_lockin.ramp_time = 0.4 电流爬升时间
+	odrv0.axis0.config.calibration_lockin.ramp_distance = 3.1415927410125732 电流爬升角度转动距离
+	odrv0.axis0.config.calibration_lockin.accel = 10 转速爬升的加速度
+	odrv0.axis0.config.calibration_lockin.vel = 20 编码器索引校准的运行速度
+
+控制器配置：
+配置为位置模式：odrv0.axis0.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
+最大转速：odrv0.axis0.controller.config.vel_limit = 300
+	配置控制器增益：（暂定）
+	odrv0.axis0.controller.config.pos_gain = 100 位置环增益280//90
+	odrv0.axis0.controller.config.vel_gain = 0.75 速度环增益0.18//0.44
+	odrv0.axis0.controller.config.vel_integrator_gain = 4 速度环增益4.0//0.1
+	梯形加减速配置：
+	odrv0.axis0.trap_traj.config.vel_limit = 270 10000//50
+	odrv0.axis0.trap_traj.config.accel_limit = 120 280//8
+	odrv0.axis0.trap_traj.config.decel_limit = 120 280//8
+配置为轨迹控制：odrv0.axis0.controller.config.input_mode = INPUT_MODE_TRAP_TRAJ
+保存配置：odrv0.save_configuration()
+重启：odrv0.reboot()
+
+校准电机：
+电机参数校准，校准过程将测量电机相电阻、电机相电感，并根据相电阻相电感自动生成电流环 PI 增益：
+odrv0.axis0.requested_state = AXIS_STATE_MOTOR_CALIBRATION
+查看错误：dump_errors(odrv0) 
+将电机 pre_calibrated 设置为 True，表示电机已校准下次重新启动后可以直接使用本次校准的结果
+odrv0.axis0.motor.config.pre_calibrated = True
+
+编码器校准：
+进行电机编码器索引校准，启动后电机将朝着一个方向开环旋转直到检测到索引信号脉冲时停止
+odrv0.axis0.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+dump_errors(odrv0)
+进行电机编码器偏移校准
+odrv0.axis0.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
+dump_errors(odrv0)
+将编码器 pre_calibrated 设置为 True，表示编码器已校准下次重新启动后可以直接使用本次校准的结果
+odrv0.axis0.encoder.config.pre_calibrated = True
+保存校准结果：
+odrv0.save_configuration()
+odrv0.reboot()
+
+测试：
+编码器索引校准
+odrv0.axis0.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+进入闭环运行
+odrv0.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+控制运动：odrv0.axis0.controller.input_pos = 1
+释放电机：odrv0.axis0.requested_state = AXIS_STATE_IDLE
+start_liveplotter(lambda:[odrv0.axis0.encoder.pos_estimate, odrv0.axis0.controller.pos_setpoint])
+
+查看编码器有没有报错：odrv0.axis0.encoder.shadow_count
+电机进入闭环然后控制的震动是因为pid没有调好
+odrv0.axis0.controller.move_incremental(0.25,True)
+odrv0.axis0.current_stateodrv0.axis0.controller.config.pos_gain = 80

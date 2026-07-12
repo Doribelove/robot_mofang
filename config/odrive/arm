@@ -1,0 +1,53 @@
+上板，右臂
+原始：
+In [2]: odrv0.axis0.controller.config.pos_gain
+Out[2]: 60.0
+
+In [3]: odrv0.axis0.controller.config.vel_gain
+Out[3]: 0.25
+
+In [4]: odrv0.axis0.controller.config.vel_integrator_gain
+Out[4]: 6.5
+
+改了后：
+In [112]: odrv0.axis0.controller.config.pos_gain
+Out[112]: 200.0
+
+In [113]: odrv0.axis0.controller.config.vel_gain
+Out[113]: 0.3
+
+In [114]: odrv0.axis0.controller.config.vel_integrator_gain
+Out[114]: 0.4
+
+
+
+上板，左臂
+原始：
+In [6]: odrv0.axis1.controller.config.pos_gain
+Out[6]: 90.0
+
+In [7]: odrv0.axis1.controller.config.vel_gain
+Out[7]: 0.42500001192092896
+
+In [8]: odrv0.axis1.controller.config.vel_integrator_gain
+Out[8]: 12.0
+改了后：
+In [137]: odrv0.axis1.controller.config.pos_gain
+Out[137]: 210.0
+
+In [138]: odrv0.axis1.controller.config.vel_gain
+Out[138]: 0.55
+
+In [139]: odrv0.axis1.controller.config.vel_integrator_gain
+Out[139]: 0.7
+
+又改了后：
+In [95]: odrv0.axis1.controller.config.pos_gain
+Out[95]: 190.0
+In [96]: odrv0.axis1.controller.config.vel_gain
+Out[96]: 0.45
+In [97]: odrv0.axis1.controller.config.vel_integrator_gain
+Out[97]: 0.8
+
+
+

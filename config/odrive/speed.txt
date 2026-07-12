@@ -1,0 +1,146 @@
+speed80
+	odrv0.axis0.controller.config.pos_gain = 120 位置环增益280//90
+	odrv0.axis0.controller.config.vel_gain = 0.64 速度环增益0.18//0.44
+	odrv0.axis0.trap_traj.config.accel_limit = 80 280//8
+	odrv0.axis0.trap_traj.config.decel_limit = 80 280//8
+	
+	odrv0.axis1.controller.config.pos_gain = 90位置环增益 //90
+	odrv0.axis1.controller.config.vel_gain = 0.38 速度环增益 //0.33
+	odrv0.axis1.trap_traj.config.accel_limit = 80 //8
+	odrv0.axis1.trap_traj.config.decel_limit = 80 //8
+speed90
+	odrv0.axis0.controller.config.pos_gain = 110 位置环增益280//90
+	odrv0.axis0.controller.config.vel_gain = 0.64 速度环增益0.18//0.44
+	odrv0.axis0.trap_traj.config.accel_limit = 90 280//8
+	odrv0.axis0.trap_traj.config.decel_limit = 90 280//8
+	
+	odrv0.axis1.controller.config.pos_gain = 100位置环增益 //90
+	odrv0.axis1.controller.config.vel_gain = 0.5 速度环增益 //0.33
+	odrv0.axis1.trap_traj.config.accel_limit = 90 //8
+	odrv0.axis1.trap_traj.config.decel_limit = 90 //8
+
+speed100
+	odrv0.axis0.controller.config.pos_gain = 90 位置环增益280//90
+	odrv0.axis0.controller.config.vel_gain = 0.62 速度环增益0.18//0.44
+	odrv0.axis0.trap_traj.config.accel_limit = 100 280//8
+	odrv0.axis0.trap_traj.config.decel_limit = 100 280//8
+	
+	odrv0.axis1.controller.config.pos_gain = 90位置环增益 //90
+	odrv0.axis1.controller.config.vel_gain = 0.54 速度环增益 //0.33
+	odrv0.axis1.trap_traj.config.accel_limit = 100 //8
+	odrv0.axis1.trap_traj.config.decel_limit = 100 //8
+	
+speed125
+	odrv0.axis0.controller.config.pos_gain = 110 位置环增益280//90
+	odrv0.axis0.controller.config.vel_gain = 0.67 速度环增益0.18//0.44
+	odrv0.axis0.trap_traj.config.accel_limit = 125 280//8
+	odrv0.axis0.trap_traj.config.decel_limit = 125 280//8
+	
+	odrv0.axis1.controller.config.pos_gain = 100位置环增益 //90
+	odrv0.axis1.controller.config.vel_gain = 0.44 速度环增益 //0.33
+	odrv0.axis1.trap_traj.config.accel_limit = 125 //8
+	odrv0.axis1.trap_traj.config.decel_limit = 125 //8
+	
+speed150
+	odrv0.axis0.controller.config.pos_gain = 100 位置环增益280//90
+	odrv0.axis0.controller.config.vel_gain = 0.6 速度环增益0.18//0.44
+	odrv0.axis0.trap_traj.config.accel_limit = 150 280//8
+	odrv0.axis0.trap_traj.config.decel_limit = 150 280//8
+	
+	odrv0.axis1.controller.config.pos_gain = 100位置环增益 //90
+	odrv0.axis1.controller.config.vel_gain = 0.44 速度环增益 //0.33
+	odrv0.axis1.trap_traj.config.accel_limit = 150 //8
+	odrv0.axis1.trap_traj.config.decel_limit = 150 //8
+
+speed180
+	odrv0.axis0.controller.config.pos_gain = 110 位置环增益280//90
+	odrv0.axis0.controller.config.vel_gain = 0.7 速度环增益0.18//0.44
+	odrv0.axis0.trap_traj.config.accel_limit = 180 280//8
+	odrv0.axis0.trap_traj.config.decel_limit = 180 280//8
+	
+	odrv0.axis1.controller.config.pos_gain = 100位置环增益 //90
+	odrv0.axis1.controller.config.vel_gain = 0.5 速度环增益 //0.33
+	odrv0.axis1.trap_traj.config.accel_limit = 180 //8
+	odrv0.axis1.trap_traj.config.decel_limit = 180 //8
+	
+speed210
+	odrv0.axis0.controller.config.pos_gain = 120 位置环增益280//90
+	odrv0.axis0.controller.config.vel_gain = 0.7 速度环增益0.18//0.44
+	odrv0.axis0.trap_traj.config.accel_limit = 210 280//8
+	odrv0.axis0.trap_traj.config.decel_limit = 210 280//8
+	
+	odrv0.axis1.controller.config.pos_gain = 100位置环增益 //90
+	odrv0.axis1.controller.config.vel_gain = 0.57 速度环增益 //0.33
+	odrv0.axis1.trap_traj.config.accel_limit = 210 //8
+	odrv0.axis1.trap_traj.config.decel_limit = 210 //8
+
+保存校准结果：
+odrv0.save_configuration()
+odrv0.reboot()
+dump_errors(odrv0)
+
+测试：
+编码器索引校准
+odrv0.axis0.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+进入闭环运行
+odrv0.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+控制运动：odrv0.axis0.controller.input_pos = 1
+释放电机：odrv0.axis0.requested_state = AXIS_STATE_IDLE
+
+编码器索引校准
+odrv0.axis1.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+进入闭环运行
+odrv0.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+控制运动：odrv0.axis1.controller.input_pos = 1
+释放电机：odrv0.axis1.requested_state = AXIS_STATE_IDLE
+
+
+
+def arm_right_slow():
+    print('右臂开始调速为slow')
+    odrv.axis0.trap_traj.config.accel_limit = 90
+    odrv.axis0.trap_traj.config.decel_limit = 90
+    # odrv.axis1.controller.config.inertia = 0.0135
+    odrv.axis0.controller.config.pos_gain = 110
+    odrv.axis0.controller.config.vel_integrator_gain =2.5
+    odrv.axis0.controller.config.vel_gain = 0.64
+def arm_right_Medium():
+    print('右臂开始调速为Medium')
+    odrv.axis0.trap_traj.config.accel_limit = 180
+    odrv.axis0.trap_traj.config.decel_limit = 180
+    # odrv.axis1.controller.config.inertia = 0.0135
+    odrv.axis0.controller.config.pos_gain = 110
+    odrv.axis0.controller.config.vel_integrator_gain =1
+    odrv.axis0.controller.config.vel_gain = 0.7
+def arm_right_fast():
+    print('右臂开始调速为fast')
+    odrv.axis0.trap_traj.config.accel_limit = 210
+    odrv.axis0.trap_traj.config.decel_limit = 210
+    # odrv.axis1.controller.config.inertia = 0.0135
+    odrv.axis0.controller.config.pos_gain = 100
+    odrv.axis0.controller.config.vel_integrator_gain =0.5
+    odrv.axis0.controller.config.vel_gain = 0.68
+def arm_left_slow():
+    print('左臂开始调速为slow')
+    odrv.axis1.trap_traj.config.accel_limit = 90
+    odrv.axis1.trap_traj.config.decel_limit = 90
+    # odrv.axis1.controller.config.inertia = 0.0135
+    odrv.axis1.controller.config.pos_gain = 120
+    odrv.axis1.controller.config.vel_integrator_gain =2.5
+    odrv.axis1.controller.config.vel_gain = 0.7
+def arm_left_Medium():
+    print('左臂开始调速为Medium')
+    odrv.axis1.trap_traj.config.accel_limit = 180
+    odrv.axis1.trap_traj.config.decel_limit = 180
+    # odrv.axis1.controller.config.inertia = 0.0135
+    odrv.axis1.controller.config.pos_gain = 100
+    odrv.axis1.controller.config.vel_integrator_gain =1
+    odrv.axis1.controller.config.vel_gain = 0.57
+def arm_left_fast():
+    print('左臂开始调速为fast')
+    odrv.axis1.trap_traj.config.accel_limit = 210
+    odrv.axis1.trap_traj.config.decel_limit = 210
+    # odrv.axis1.controller.config.inertia = 0.0135
+    odrv.axis1.controller.config.pos_gain = 110
+    odrv.axis1.controller.config.vel_integrator_gain =0.5
+    odrv.axis1.controller.config.vel_gain = 0.62

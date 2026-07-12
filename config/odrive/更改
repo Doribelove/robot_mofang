@@ -1,0 +1,4 @@
+odrv0.axis0.encoder.config.bandwidth = 3000
+设置编码器 PLL 带宽，一般对于高分辨率编码器 (> 4000个计数/转) 此值应该越高，这样有助于减少电机振动
+odrv0.axis0.controller.config.vel_integrator_gain 增大
+dump_errors(odrv0, True)清除错误

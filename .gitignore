@@ -1,0 +1,37 @@
+# Local archive created while reorganizing the original project
+/.archive/
+/.agents/
+/.codex/
+/twophase/
+
+# IDE and OS files
+/.idea/
+**/.idea/
+**/.vs/
+**/.vscode/
+.DS_Store
+Thumbs.db
+*.lnk
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Runtime camera captures and logs
+/1.jpg
+/2.jpg
+/3.jpg
+/4.jpg
+/11.jpg
+/22.jpg
+/33.jpg
+/44.jpg
+*.log
+
+# Local environment overrides
+.env

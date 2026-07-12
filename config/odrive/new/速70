@@ -1,0 +1,79 @@
+右臂初始化
+odrv0.axis0.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+odrv0.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+odrv0.axis0.controller.input_pos = -0.329
+odrv0.axis0.controller.input_pos = -0.079
+odrv0.axis0.controller.move_incremental(0.5,True)   
+odrv0.axis0.controller.move_incremental(0.25,True)
+odrv0.axis0.controller.move_incremental(-0.25,True)
+odrv0.axis0.requested_state = AXIS_STATE_IDLE
+start_liveplotter(lambda:[odrv0.axis0.encoder.pos_estimate, odrv0.axis0.controller.pos_setpoint])
+odrv0.save_configuration()
+odrv0.reboot()
+
+
+带转:
+In [610]: odrv0.axis0.trap_traj.config.accel_limit
+Out[610]: 70
+odrv0.axis0.trap_traj.config.accel_limit=70
+
+In [611]: odrv0.axis0.trap_traj.config.decel_limit
+Out[611]: 70
+odrv0.axis0.trap_traj.config.decel_limit=70
+
+In [2]: odrv0.axis0.controller.config.pos_gain
+Out[2]: 60
+
+In [3]: odrv0.axis0.controller.config.vel_gain
+Out[3]: 0.9
+
+In [4]: odrv0.axis0.controller.config.vel_integrator_gain
+Out[4]: 0.01
+
+In [31]: odrv0.axis0.controller.config.inertia
+Out[31]: 0.004
+odrv0.axis0.controller.config.inertia=0.004
+
+
+
+
+
+
+左臂初始化
+odrv0.axis1.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+odrv0.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+odrv0.axis1.controller.input_pos = -0.283
+odrv0.axis1.controller.input_pos = -0.033
+odrv0.axis1.controller.move_incremental(0.5,True)   
+odrv0.axis1.controller.move_incremental(0.5,True)   
+odrv0.axis1.controller.move_incremental(0.25,True)  
+odrv0.axis1.controller.move_incremental(-0.25,True) 
+odrv0.axis1.requested_state = AXIS_STATE_IDLE
+start_liveplotter(lambda:[odrv0.axis1.encoder.pos_estimate, odrv0.axis1.controller.pos_setpoint])
+odrv0.save_configuration()
+odrv0.reboot()
+
+
+带转：
+In [6]: odrv0.axis1.trap_traj.config.accel_limit
+Out[6]: 70.0
+odrv0.axis1.trap_traj.config.accel_limit=70
+
+In [7]: odrv0.axis1.trap_traj.config.decel_limit
+Out[7]: 70.0
+odrv0.axis1.trap_traj.config.decel_limit=70
+
+In [11]: odrv0.axis1.controller.config.pos_gain
+Out[11]: 60
+
+In [12]: odrv0.axis1.controller.config.vel_gain
+Out[12]: 0.9
+
+In [13]: odrv0.axis1.controller.config.vel_integrator_gain
+Out[13]: 0.01
+
+In [33]: odrv0.axis1.controller.config.inertia
+Out[33]: 0.005
+odrv0.axis1.controller.config.inertia=0.005
+
+
