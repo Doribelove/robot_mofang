@@ -1,12 +1,23 @@
 # 魔方机器人
 
-视频材料请点击链接：【24年魔方机器人竞赛国家级二等奖视频记录-哔哩哔哩】 https://b23.tv/V3nBytA
+7 秒完成识别、解算与实体魔方还原，获 2024 年中国高校智能机器人创意大赛国家级二等奖，总排名 9/55。
 
-包含了国奖证明、比赛合影和魔方还原测试与实操，最终以7s的识别+解算+成功还原斩获国家级二等奖，总排名9/55。
+[实物图集与结构设计](https://doribelove.github.io/projects/#cube-gallery) · [三段实机测试](https://doribelove.github.io/projects/#cube-tests) · [比赛与完整演示](https://doribelove.github.io/projects/#cube) · [B 站视频](https://www.bilibili.com/video/BV1haNg6fE5s/)
 
 一套使用四路视觉识别、Two-Phase 魔方求解和双臂协同执行的实体魔方机器人程序。
 该系统已完成从图像采集、状态识别、公式求解、机械动作优化到 ODrive/Arduino 执行的完整流程，
 当前仓库以 2024 年更新的“按键夹”版本作为正式版本。
+
+## 实物与演示
+
+![整机结构与硬件集成：双臂夹爪、相机与驱动控制](https://doribelove.github.io/media/cube-hardware-overview.jpg)
+
+| 双臂执行机构 | 结构建模与尺寸设计 |
+| --- | --- |
+| ![双臂执行机构](https://doribelove.github.io/media/cube-dual-arm-assembly.jpg) | ![双臂与夹爪结构建模](https://doribelove.github.io/media/cube-arm-cad.png) |
+
+实机视频展示双臂协同转面、夹爪转动与取放、整机实测与计时。
+[打开视频图集](https://doribelove.github.io/projects/#cube-tests)。
 
 > **安全警告**：程序会在初始化时进行 ODrive 编码器索引搜索，并驱动双臂、夹爪和电磁/气动机构。
 > 首次部署必须空载、限速并配备可触及的硬件急停。不要仅依赖终端中断保证安全。
