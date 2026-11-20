@@ -28,20 +28,19 @@ def SolvingCube():
     # CubeState = ('U B B2 D\'')
     # input("按键开始解算魔方")
     # CubeState = 'BDBDUUFUFLLULRDBBLRFUBFFBURLBDRDRFLDUFDRLDRUDRRLLBFFBU'
-    while (vision_.ok_flag != True):
-        time.sleep(0.001)
+    cube_state = vision_.wait_for_cube()
     # time_begin = time.time()
     
     # print('识别时间 = ' + str(time.time()-time_begin))
     print('vision_.cubestate')
-    print(vision_.cubestate)
+    print(cube_state)
     hardware.open_hand()
     time.sleep(0.005)
     hardware.catch_both()
     # time.sleep(0.01)
     # Solution = kociemba.solve(vision_.cubestate)
     time_begin = time.time()
-    Solution = sv.solve(vision_.cubestate,0,0.08)
+    Solution = sv.solve(cube_state,0,0.08)
     # steps,cost,flag = KociembaTrans.TransToRealSolution(Solution)
     # Solution = sv.solve(CubeState,0,0.4)
     print('解算时间 = ' + str(time.time()-time_begin))
