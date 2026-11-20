@@ -3,6 +3,7 @@
 # sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import os
 import time
+from contextlib import ExitStack
 import cv2
 import threading
 import numpy as np
@@ -25,6 +26,8 @@ CAMERA_DEVICES = [
 flag = True
 flag_main = True
 ok_flag = False
+recognition_finished = threading.Event()
+capture_error = None
 
 img_flag1 = 0
 img_flag2 = 0
@@ -524,6 +527,7 @@ def cube_recognize():
         return
 
     ok_flag = True
+    recognition_finished.set()
     # hardware.catch_both()
     turn_main_false()
 
@@ -601,12 +605,30 @@ def cube_judge():
     
     
 
-def Thread_UpdateImg():
+def wait_for_cube():
+    recognition_finished.wait()
+    if not ok_flag:
+        raise RuntimeError("Cube recognition stopped: {}".format(capture_error)) from capture_error
+    return cubestate
+
+
+def _read_frames(cameras):
+    # Retry the entire set once so one cube state never mixes capture attempts.
+    for _ in range(2):
+        samples = [camera.read() for camera in cameras]
+        missing = [device for device, (ok, frame) in zip(CAMERA_DEVICES, samples)
+                   if not ok or frame is None or frame.size == 0]
+        if not missing:
+            return [frame for _, frame in samples]
+    raise RuntimeError("Incomplete camera capture after retry: " + ", ".join(missing))
+
+
+def _update_images(open_camera):
     global img_flag1,img_flag2,img_flag3,img_flag4,img_flag5,soving_flag,sovingdown_flag
     global img_cube1,img_cube2,img_cube3,img_cube4,img_cube5
     global flag
 
-    cap1 = cv2.VideoCapture(CAMERA_DEVICES[0])
+    cap1 = open_camera(CAMERA_DEVICES[0])
     # cap1.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)# where 0.25 means "manual exposure, manual iris"  opencv4
     # cap1.set(cv2.CAP_PROP_EXPOSURE, 15)
     # cap1.set(cv2.CAP_PROP_CONTRAST, 30)
@@ -615,7 +637,7 @@ def Thread_UpdateImg():
     # cap1.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     cap1.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
     # cap1.release()
-    cap2 = cv2.VideoCapture(CAMERA_DEVICES[1])
+    cap2 = open_camera(CAMERA_DEVICES[1])
     # cap2.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)# where 0.25 means "manual exposure, manual iris" opencv4
     # cap2.set(cv2.CAP_PROP_EXPOSURE, 14)
     # cap2.set(cv2.CAP_PROP_BRIGHTNESS, 0)  
@@ -625,7 +647,7 @@ def Thread_UpdateImg():
     # cap2.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     cap2.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
     # cap2.release()
-    cap3 = cv2.VideoCapture(CAMERA_DEVICES[2])
+    cap3 = open_camera(CAMERA_DEVICES[2])
     # cap3.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)# where 0.25 means "manual exposure, manual iris" opencv4
     # cap3.set(cv2.CAP_PROP_EXPOSURE, 8) 
     # cap3.set(cv2.CAP_PROP_BRIGHTNESS, -20)    
@@ -634,7 +656,7 @@ def Thread_UpdateImg():
     # cap3.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     cap3.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
     # cap3.release()
-    cap4 = cv2.VideoCapture(CAMERA_DEVICES[3])
+    cap4 = open_camera(CAMERA_DEVICES[3])
     # cap4.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)# where 0.25 means "manual exposure, manual iris" opencv4
     # cap4.set(cv2.CAP_PROP_EXPOSURE, 10) 
     # cap4.set(cv2.CAP_PROP_BRIGHTNESS, 0)
@@ -650,13 +672,10 @@ def Thread_UpdateImg():
     # cap2 = cv2.VideoCapture('/dev/video222')
     # cap4 = cv2.VideoCapture(4)
     while (flag_main):
-        ret1,img_cube1,  = cap1.read()
+        img_cube1, img_cube2, img_cube3, img_cube4 = _read_frames((cap1, cap2, cap3, cap4))
         cv2.imshow("cube1",img_cube1)
-        ret1,img_cube2,  = cap2.read()
         cv2.imshow("cube2",img_cube2)
-        ret1,img_cube3,  = cap3.read()
         cv2.imshow("cube3",img_cube3)
-        ret1,img_cube4,  = cap4.read()
         cv2.imshow("cube4",img_cube4)
         cv2.waitKey(1)
         if (flag == False):
@@ -669,13 +688,29 @@ def Thread_UpdateImg():
     cv2.imwrite('33.jpg', img_cube3)
     cv2.imwrite('44.jpg', img_cube4)
     while(True):
-        ret1,img_cube5,  = cap1.read()
+        img_cube5, = _read_frames((cap1,))
         cv2.imshow("cube5",img_cube5)
         cv2.waitKey(1)
 
-    # input()
+def Thread_UpdateImg():
+    global capture_error
+    try:
+        with ExitStack() as cleanup:
+            cleanup.callback(cv2.destroyAllWindows)
 
-    time.sleep(1)
+            def open_camera(device):
+                camera = cv2.VideoCapture(device)
+                cleanup.callback(camera.release)
+                if not camera.isOpened():
+                    raise RuntimeError("Cannot open camera: " + device)
+                return camera
+
+            _update_images(open_camera)
+    except Exception as exc:
+        capture_error = exc
+        print("Vision capture stopped:", exc)
+    finally:
+        recognition_finished.set()
 
 def exchange(val):
     return (val[1], val[0])
@@ -687,8 +722,7 @@ print("vision module start working!")
 if __name__ == '__main__':
     input()
     turn_false()
-    while (ok_flag != True):
-        time.sleep(0.001)
+    wait_for_cube()
     # time_begin = time.time()
     
     # print('识别时间 = ' + str(time.time()-time_begin))
